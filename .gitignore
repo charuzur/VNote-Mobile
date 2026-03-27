@@ -1,0 +1,32 @@
+# Android Studio / IntelliJ
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# User-specific / Machine-specific
+*.pyc
+*.xml
+!**/res/**/xml/*.xml
+!**/src/**/*.xml
+/captures/
+
+# Working directories
+bin/
+gen/
+
+# Mobile specific
+*.apk
+*.ap_
+*.dex
+
+# Keystore files (CRITICAL: Never push your signing keys!)
+*.jks
+*.keystore
+*.p12
+*.google_play_keys
