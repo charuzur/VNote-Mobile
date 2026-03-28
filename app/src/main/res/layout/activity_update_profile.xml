@@ -10,15 +10,15 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
         <ImageView
-            android:id="@+id/ivBackUpdate"
+            android:id="@+id/ivBackUpdateProfile"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_revert"
+            android:src="@drawable/ic_back"
             android:layout_centerVertical="true"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Update Profile"
+            android:text="Edit Profile"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#1A1A1A"
@@ -34,7 +34,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name"
+            android:text="Full Name"
             android:textColor="#333333"
             android:layout_marginBottom="8dp"/>
         <EditText
@@ -42,7 +42,6 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_input"
-            android:hint="Charles Hudar"
             android:inputType="textPersonName"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="20dp"/>
@@ -58,8 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/bg_input"
-            android:hint="charuzu"
-            android:inputType="text"
+            android:inputType="textNoSuggestions"
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="32dp"/>
 

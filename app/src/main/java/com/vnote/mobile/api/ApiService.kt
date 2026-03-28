@@ -1,10 +1,14 @@
 package com.vnote.mobile.api
 
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT // Added this missing import!
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface ApiService {
@@ -14,8 +18,7 @@ interface ApiService {
     @POST("api/v1/auth/register")
     fun register(@Body request: RegisterRequest): Call<AuthResponse>
 
-    // NEW: Fetch Notes for the Dashboard!
-    // We add the @Header to satisfy the "Authorization: Bearer <token>" rubric requirement
+    // Fetch Notes for the Dashboard
     @GET("api/v1/notes/user/{userId}")
     fun getUserNotes(
         @Header("Authorization") token: String,
@@ -33,4 +36,12 @@ interface ApiService {
     // Change Password
     @PUT("api/v1/users/{id}/password")
     fun changePassword(@Path("id") id: String, @Body passwords: Map<String, String>): Call<Map<String, String>>
+
+    // Upload Photo
+    @Multipart
+    @POST("api/v1/users/{id}/photo")
+    fun uploadPhoto(
+        @Path("id") id: String,
+        @Part file: MultipartBody.Part
+    ): Call<Map<String, String>>
 }

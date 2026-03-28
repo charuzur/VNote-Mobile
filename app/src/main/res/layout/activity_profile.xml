@@ -8,7 +8,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="100dp">
+        android:paddingBottom="70dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,34 +26,65 @@
                 android:textColor="#1A1A1A"
                 android:layout_marginBottom="24dp"/>
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:cardCornerRadius="50dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/primary_blue"
+            <RelativeLayout
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_marginBottom="16dp">
 
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardBorder"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_centerInParent="true"
+                    app:cardCornerRadius="50dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/primary_blue">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardImageMask"
+                        android:layout_width="94dp"
+                        android:layout_height="94dp"
+                        android:layout_gravity="center"
+                        app:cardCornerRadius="47dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@android:color/white"> <ImageView
+                        android:id="@+id/ivProfilePicture"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/ic_launcher_round"/>
+                    </androidx.cardview.widget.CardView>
+                </androidx.cardview.widget.CardView>
+
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
+                    android:id="@+id/ivEditProfilePic"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
                     android:background="@drawable/bg_logo_square"
-                    android:src="@mipmap/ic_launcher_round"/>
-            </androidx.cardview.widget.CardView>
+                    android:backgroundTint="@color/primary_blue"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_edit_filled"
+                    app:tint="#FFFFFF"/>
+            </RelativeLayout>
 
             <TextView
+                android:id="@+id/tvProfileName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Charles Hudar"
+                android:text="Loading Name..."
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#1A1A1A"/>
 
             <TextView
+                android:id="@+id/tvProfileUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@charuzu"
+                android:text="@loading"
                 android:textColor="#888888"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="12dp"/>
@@ -82,12 +113,14 @@
                         android:layout_marginEnd="8dp"/>
 
                     <TextView
+                        android:id="@+id/tvMemberSince"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Member since Jan 2025"
+                        android:text="Member since..."
                         android:textColor="@color/primary_blue"
                         android:textStyle="bold"
                         android:textSize="12sp"/>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -127,9 +160,10 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/tvNotesTotalCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="12"
+                        android:text="0"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:textColor="#1A1A1A"
@@ -178,13 +212,6 @@
                         android:layout_toEndOf="@id/ic1"
                         android:layout_marginStart="16dp"
                         android:layout_centerVertical="true"/>
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="#FFFFFF"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -220,13 +247,6 @@
                         android:textSize="16sp"
                         android:layout_toEndOf="@id/ic2"
                         android:layout_marginStart="16dp"
-                        android:layout_centerVertical="true"/>
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="#FFFFFF"
-                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"/>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -266,13 +286,6 @@
                         android:layout_toEndOf="@id/ic3"
                         android:layout_marginStart="16dp"
                         android:layout_centerVertical="true"/>
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="#CCCCCC"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -308,6 +321,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_trash_red"
+                        app:tint="#E53935"
                         android:layout_centerVertical="true"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -319,26 +333,32 @@
                         android:layout_toEndOf="@id/ic4"
                         android:layout_marginStart="16dp"
                         android:layout_centerVertical="true"/>
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_arrow_right"
-                        app:tint="#FFCDD2"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"/>
                 </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationViewProfile"
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:layout_gravity="bottom"
-        android:background="#FFFFFF"
-        app:itemIconTint="@color/primary_blue"
-        app:itemTextColor="@color/primary_blue"
-        app:menu="@menu/bottom_nav_profile" />
+        app:fabCradleMargin="10dp"
+        app:fabCradleRoundedCornerRadius="20dp"
+        app:fabCradleVerticalOffset="10dp"
+        android:backgroundTint="#FFFFFF">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationViewProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:elevation="0dp"
+            app:itemIconTint="@color/primary_blue"
+            app:itemTextColor="@color/primary_blue"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_profile" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

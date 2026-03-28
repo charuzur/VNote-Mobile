@@ -9,5 +9,12 @@ data class NoteResponse(
     val title: String,
     val content: String
 )
-data class UserResponse(val userId: Long, val fullName: String, val username: String)
+// Notice we added val profileImage: String? at the end
+data class UserResponse(
+    val userId: Long,
+    val fullName: String,
+    val username: String,
+    val profileImage: String?,
+    val createdAt: String?
+)
 data class UpdateProfileRequest(val fullName: String, val username: String)
