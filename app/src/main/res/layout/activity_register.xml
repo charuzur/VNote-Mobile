@@ -102,6 +102,14 @@
             android:paddingHorizontal="16dp"
             android:layout_marginBottom="24dp"/>
 
+        <ProgressBar
+            android:id="@+id/progressBarRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/primary_blue" />
+
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"

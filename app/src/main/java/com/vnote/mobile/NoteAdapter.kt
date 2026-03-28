@@ -5,16 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.vnote.mobile.api.NoteResponse
 
-// We added a click listener function to the constructor!
 class NoteAdapter(
-    val notesList: MutableList<Note>,
-    private val onNoteClick: (Note) -> Unit
+    var notesList: MutableList<NoteResponse>, // Changed to NoteResponse
+    private val onNoteClick: (NoteResponse) -> Unit
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tvNoteTitle)
-        val tvDate: TextView = itemView.findViewById(R.id.tvNoteDate)
+        val tvDate: TextView = itemView.findViewById(R.id.tvNoteDate) // Using this for content preview
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -25,15 +25,14 @@ class NoteAdapter(
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
         val note = notesList[position]
         holder.tvTitle.text = note.title
-        holder.tvDate.text = note.date
 
-        // When the card is clicked, trigger the listener!
+        // Showing a preview of the content since our backend doesn't send a formatted date yet
+        holder.tvDate.text = if (note.content.length > 20) note.content.take(20) + "..." else note.content
+
         holder.itemView.setOnClickListener {
             onNoteClick(note)
         }
     }
 
-    override fun getItemCount(): Int {
-        return notesList.size
-    }
+    override fun getItemCount(): Int = notesList.size
 }
