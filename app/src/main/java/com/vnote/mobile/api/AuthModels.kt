@@ -5,9 +5,10 @@ data class RegisterRequest(val fullName: String, val username: String, val passw
 // Add the userId to this class!
 data class AuthResponse(val token: String?, val message: String?, val userId: Int?)
 data class NoteResponse(
-    val id: Long,
+    val noteId: Long,
     val title: String,
-    val content: String
+    val content: String,
+    val createdAt: String?
 )
 // Notice we added val profileImage: String? at the end
 data class UserResponse(
@@ -18,3 +19,5 @@ data class UserResponse(
     val createdAt: String?
 )
 data class UpdateProfileRequest(val fullName: String, val username: String)
+
+data class NoteRequest(val title: String, val content: String, val userId: Long)

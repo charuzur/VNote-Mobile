@@ -6,15 +6,23 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.vnote.mobile.api.NoteResponse
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class NoteAdapter(
-    var notesList: MutableList<NoteResponse>, // Changed to NoteResponse
+    // FIXED: Removed the word 'private' so MainActivity can access the list during swipe-to-delete!
+    var notesList: MutableList<NoteResponse>,
     private val onNoteClick: (NoteResponse) -> Unit
 ) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
 
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tvNoteTitle)
-        val tvDate: TextView = itemView.findViewById(R.id.tvNoteDate) // Using this for content preview
+        val tvDate: TextView = itemView.findViewById(R.id.tvNoteDate)
+    }
+
+    fun updateList(newList: List<NoteResponse>) {
+        notesList = newList.toMutableList()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
@@ -26,8 +34,18 @@ class NoteAdapter(
         val note = notesList[position]
         holder.tvTitle.text = note.title
 
-        // Showing a preview of the content since our backend doesn't send a formatted date yet
-        holder.tvDate.text = if (note.content.length > 20) note.content.take(20) + "..." else note.content
+        if (!note.createdAt.isNullOrEmpty()) {
+            try {
+                val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                val formatter = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                val parsedDate = parser.parse(note.createdAt)
+                holder.tvDate.text = parsedDate?.let { formatter.format(it) } ?: note.createdAt
+            } catch (e: Exception) {
+                holder.tvDate.text = "Unknown Date"
+            }
+        } else {
+            holder.tvDate.text = "Just now"
+        }
 
         holder.itemView.setOnClickListener {
             onNoteClick(note)

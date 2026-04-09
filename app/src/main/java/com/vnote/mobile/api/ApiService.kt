@@ -10,6 +10,7 @@ import retrofit2.http.POST
 import retrofit2.http.PUT // Added this missing import!
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.DELETE
 
 interface ApiService {
     @POST("api/v1/auth/login")
@@ -24,6 +25,28 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("userId") userId: String
     ): Call<List<NoteResponse>>
+
+    // Create a Note
+    @POST("api/v1/notes")
+    fun createNote(
+        @Header("Authorization") token: String,
+        @Body request: NoteRequest
+    ): Call<NoteResponse>
+
+    // Update a Note
+    @PUT("api/v1/notes/{id}")
+    fun updateNote(
+        @Header("Authorization") token: String,
+        @Path("id") noteId: Long,
+        @Body request: NoteRequest
+    ): Call<Map<String, String>>
+
+    // Delete a Note
+    @DELETE("api/v1/notes/{id}")
+    fun deleteNote(
+        @Header("Authorization") token: String,
+        @Path("id") noteId: Long
+    ): Call<Map<String, String>>
 
     // Get Profile Data
     @GET("api/v1/users/{id}")
