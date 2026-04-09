@@ -1,6 +1,7 @@
 package com.vnote.mobile
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.EditText
 import android.widget.ImageView
@@ -8,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.card.MaterialCardView
 import com.vnote.mobile.api.NoteRequest
 import com.vnote.mobile.api.NoteResponse
 import com.vnote.mobile.api.RetrofitClient
@@ -27,6 +29,7 @@ class EditNoteActivity : AppCompatActivity() {
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         val tvActionBtn = findViewById<TextView>(R.id.tvSave)
         val tvScreenTitle = findViewById<TextView>(R.id.tvScreenTitle)
+        val cardScreenTitle = findViewById<MaterialCardView>(R.id.cardScreenTitle) // NEW: Grabbing the card view!
         val etTitle = findViewById<EditText>(R.id.etNoteTitle)
         val etContent = findViewById<EditText>(R.id.etNoteContent)
 
@@ -38,14 +41,14 @@ class EditNoteActivity : AppCompatActivity() {
             etContent.setText(intent.getStringExtra("NOTE_CONTENT"))
         }
 
-        updateUI(currentMode, tvScreenTitle, tvActionBtn, etTitle, etContent)
+        // Pass the cardScreenTitle to our UI updater
+        updateUI(currentMode, tvScreenTitle, cardScreenTitle, tvActionBtn, etTitle, etContent)
 
         tvActionBtn.setOnClickListener {
             if (currentMode == "VIEW") {
                 currentMode = "EDIT"
-                updateUI(currentMode, tvScreenTitle, tvActionBtn, etTitle, etContent)
+                updateUI(currentMode, tvScreenTitle, cardScreenTitle, tvActionBtn, etTitle, etContent)
             } else if (currentMode == "EDIT") {
-                // ADDED: The Save Verification Dialog for Editing!
                 AlertDialog.Builder(this)
                     .setTitle("Save Changes")
                     .setMessage("Are you sure you want to save these changes to your note?")
@@ -55,16 +58,12 @@ class EditNoteActivity : AppCompatActivity() {
                     .setNegativeButton("Cancel", null)
                     .show()
             } else {
-                // If creating a brand new note, just save it immediately
                 saveNote(etTitle.text.toString().trim(), etContent.text.toString().trim())
             }
         }
 
-        ivBack.setOnClickListener {
-            handleBackPress()
-        }
+        ivBack.setOnClickListener { handleBackPress() }
 
-        // ADDED: This also catches the physical/hardware back button on the phone!
         onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 handleBackPress()
@@ -83,7 +82,6 @@ class EditNoteActivity : AppCompatActivity() {
                 .setNegativeButton("Cancel", null)
                 .show()
         } else {
-            // If we are just viewing, let them go back immediately without a prompt
             finish()
         }
     }
@@ -120,14 +118,12 @@ class EditNoteActivity : AppCompatActivity() {
                 }
             })
         } else if (currentMode == "EDIT") {
-            // FIXED: Now properly uses the true noteId from the database
             RetrofitClient.instance.updateNote(bearerToken, noteId, request).enqueue(object : Callback<Map<String, String>> {
                 override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
                     if (response.isSuccessful) {
                         Toast.makeText(this@EditNoteActivity, "Note Saved!", Toast.LENGTH_SHORT).show()
                         finish()
                     } else {
-                        // Added Error Toast so it won't fail silently anymore!
                         Toast.makeText(this@EditNoteActivity, "Failed to save. Error: ${response.code()}", Toast.LENGTH_LONG).show()
                     }
                 }
@@ -138,20 +134,24 @@ class EditNoteActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUI(mode: String, title: TextView, actionBtn: TextView, etTitle: EditText, etContent: EditText) {
+    // UPDATED: This now accepts the MaterialCardView and changes its background color dynamically!
+    private fun updateUI(mode: String, title: TextView, cardTitle: MaterialCardView, actionBtn: TextView, etTitle: EditText, etContent: EditText) {
         when (mode) {
             "CREATE" -> {
-                title.text = "Create a Note"
+                title.text = "NEW NOTE"
+                cardTitle.setCardBackgroundColor(Color.parseColor("#007bff")) // Blue
                 actionBtn.text = "Save"
                 setEditable(true, etTitle, etContent)
             }
             "VIEW" -> {
-                title.text = "View Note"
+                title.text = "VIEW NOTE"
+                cardTitle.setCardBackgroundColor(Color.parseColor("#6c757d")) // Grey
                 actionBtn.text = "Edit"
                 setEditable(false, etTitle, etContent)
             }
             "EDIT" -> {
-                title.text = "Edit Note"
+                title.text = "EDIT NOTE"
+                cardTitle.setCardBackgroundColor(Color.parseColor("#007bff")) // Blue
                 actionBtn.text = "Save"
                 setEditable(true, etTitle, etContent)
             }

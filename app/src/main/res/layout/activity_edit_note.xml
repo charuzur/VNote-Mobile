@@ -22,15 +22,27 @@
             android:clickable="true"
             android:focusable="true"/>
 
-        <TextView
-            android:id="@+id/tvScreenTitle"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardScreenTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Note"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#1A1A1A"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/primary_blue">
+
+            <TextView
+                android:id="@+id/tvScreenTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NEW NOTE"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:letterSpacing="0.05"/>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvSave"
