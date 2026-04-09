@@ -21,11 +21,10 @@
                 android:id="@+id/ivLogo"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:src="@drawable/ic_note_2"
-                app:tint="#FFFFFF"
                 android:background="@drawable/bg_logo_square"
-                android:padding="8dp"
-                android:layout_centerVertical="true"/>
+                android:padding="7dp"
+                android:src="@drawable/ic_notes"
+                app:tint="#FFFFFF" />
 
             <TextView
                 android:id="@+id/tvAppTitle"
