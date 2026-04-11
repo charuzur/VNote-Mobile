@@ -1,4 +1,4 @@
-package com.vnote.mobile.api
+package com.vnote.mobile.core.network
 
 import okhttp3.MultipartBody
 import retrofit2.Call

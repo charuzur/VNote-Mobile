@@ -16,16 +16,16 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".EditNoteActivity"
+            android:name=".features.note_edit.EditNoteActivity"
             android:exported="false" />
         <activity
-            android:name=".RegisterActivity"
+            android:name=".features.register.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".features.dashboard.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".features.login.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,9 +33,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".UpdateProfileActivity" />
-        <activity android:name=".ChangePasswordActivity" />
+        <activity android:name=".features.profile.main.ProfileActivity" />
+        <activity android:name=".features.profile.update.UpdateProfileActivity" />
+        <activity android:name=".features.profile.password.ChangePasswordActivity" />
     </application>
 
 </manifest>

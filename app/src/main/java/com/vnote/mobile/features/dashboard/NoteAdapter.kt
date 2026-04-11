@@ -1,11 +1,12 @@
-package com.vnote.mobile
+package com.vnote.mobile.features.dashboard
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.vnote.mobile.api.NoteResponse
+import com.vnote.mobile.R
+import com.vnote.mobile.core.network.NoteResponse
 import java.text.SimpleDateFormat
 import java.util.Locale
 

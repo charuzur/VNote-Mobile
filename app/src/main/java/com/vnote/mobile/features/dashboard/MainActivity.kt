@@ -1,4 +1,4 @@
-package com.vnote.mobile
+package com.vnote.mobile.features.dashboard
 
 import android.content.Context
 import android.content.Intent
@@ -16,19 +16,17 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.vnote.mobile.api.NoteResponse
-import com.vnote.mobile.api.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.vnote.mobile.R
+import com.vnote.mobile.core.network.NoteResponse
+import com.vnote.mobile.features.login.LoginActivity
+import com.vnote.mobile.features.note_edit.EditNoteActivity
+import com.vnote.mobile.features.profile.main.ProfileActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
 
+    private lateinit var presenter: MainPresenter
     private lateinit var adapter: NoteAdapter
     private lateinit var tvNoteCount: TextView
-
-    // We only need ONE master list here now! The Adapter handles the filtered list.
-    private var fullNotesList = mutableListOf<NoteResponse>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,49 +35,33 @@ class MainActivity : AppCompatActivity() {
         tvNoteCount = findViewById(R.id.tvNoteCount)
         val rvNotes = findViewById<RecyclerView>(R.id.rvNotes)
 
-        // Pass an empty list initially; we will fill it from the database
+        presenter = MainPresenter(this, MainModel())
+
         adapter = NoteAdapter(mutableListOf()) { clickedNote ->
-            val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("MODE", "VIEW")
-            intent.putExtra("NOTE_ID", clickedNote.noteId)
-            intent.putExtra("NOTE_TITLE", clickedNote.title)
-            intent.putExtra("NOTE_CONTENT", clickedNote.content)
-            startActivity(intent)
+            presenter.onNoteClicked(clickedNote)
         }
         rvNotes.layoutManager = LinearLayoutManager(this)
         rvNotes.adapter = adapter
 
-        // Search Bar Logic
+        // Search Bar
         val etSearch = findViewById<android.widget.EditText>(R.id.etSearch)
         etSearch.addTextChangedListener(object : android.text.TextWatcher {
             override fun afterTextChanged(s: android.text.Editable?) {
-                val query = s.toString().lowercase()
-                if (query.isEmpty()) {
-                    adapter.updateList(fullNotesList) // Show all if empty
-                } else {
-                    // Filter by title or content
-                    val filtered = fullNotesList.filter {
-                        it.title.lowercase().contains(query) || it.content.lowercase().contains(query)
-                    }
-                    adapter.updateList(filtered)
-                }
+                presenter.onSearchQueryChanged(s.toString().lowercase())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // Create Note Button
+        // Buttons & Nav
         findViewById<FloatingActionButton>(R.id.fabCreateNote).setOnClickListener {
-            val intent = Intent(this, EditNoteActivity::class.java)
-            intent.putExtra("MODE", "CREATE")
-            startActivity(intent)
+            presenter.onCreateNoteClicked()
         }
 
-        // Bottom Navigation
         findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNavigationView).setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
+                    presenter.onProfileMenuClicked()
                     true
                 }
                 else -> false
@@ -89,61 +71,85 @@ class MainActivity : AppCompatActivity() {
         setupSwipeToDelete(rvNotes)
     }
 
-    // Refresh the list automatically every time we return to the Dashboard
     override fun onResume() {
         super.onResume()
-        fetchNotes()
+        presenter.loadNotes()
     }
 
-    private fun fetchNotes() {
-        val sharedPref = getSharedPreferences("APP", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("TOKEN", "") ?: ""
+    // --- MVP VIEW IMPLEMENTATIONS ---
 
-        if (token.isEmpty()) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return
-        }
-
-        val bearerToken = "Bearer $token"
-
-        RetrofitClient.instance.getUserNotes(bearerToken, token).enqueue(object : Callback<List<NoteResponse>> {
-            override fun onResponse(call: Call<List<NoteResponse>>, response: Response<List<NoteResponse>>) {
-                if (response.isSuccessful) {
-                    fullNotesList.clear() // Keep master list updated
-                    response.body()?.let { fullNotesList.addAll(it) }
-
-                    adapter.updateList(fullNotesList)
-                    tvNoteCount.text = fullNotesList.size.toString()
-                } else if (response.code() == 401) {
-                    Toast.makeText(this@MainActivity, "Session expired. Please login again.", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<List<NoteResponse>>, t: Throwable) {
-                Toast.makeText(this@MainActivity, "Failed to load notes: Network Error", Toast.LENGTH_SHORT).show()
-            }
-        })
+    override fun getToken(): String {
+        return getSharedPreferences("APP", Context.MODE_PRIVATE).getString("TOKEN", "") ?: ""
     }
 
+    override fun showNotes(notes: List<NoteResponse>) {
+        adapter.updateList(notes)
+    }
+
+    override fun updateNoteCount(count: Int) {
+        tvNoteCount.text = count.toString()
+    }
+
+    override fun showError(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showSessionExpired() {
+        Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
+
+    override fun navigateToCreateNote() {
+        val intent = Intent(this, EditNoteActivity::class.java)
+        intent.putExtra("MODE", "CREATE")
+        startActivity(intent)
+    }
+
+    override fun navigateToEditNote(note: NoteResponse) {
+        val intent = Intent(this, EditNoteActivity::class.java)
+        intent.putExtra("MODE", "VIEW")
+        intent.putExtra("NOTE_ID", note.noteId)
+        intent.putExtra("NOTE_TITLE", note.title)
+        intent.putExtra("NOTE_CONTENT", note.content)
+        startActivity(intent)
+    }
+
+    override fun navigateToProfile() {
+        startActivity(Intent(this, ProfileActivity::class.java))
+    }
+
+    override fun showDeleteConfirmation(note: NoteResponse, position: Int) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Note")
+            .setMessage("Are you sure you want to permanently delete this note?")
+            .setPositiveButton("Delete") { _, _ -> presenter.confirmDeleteNote(note, position) }
+            .setNegativeButton("Cancel") { _, _ -> presenter.cancelDeleteNote(position) }
+            .setCancelable(false)
+            .show()
+    }
+
+    override fun removeNoteFromList(position: Int) {
+        adapter.notesList.removeAt(position)
+        adapter.notifyItemRemoved(position)
+    }
+
+    override fun resetSwipeState(position: Int) {
+        adapter.notifyItemChanged(position)
+    }
+
+    // --- UI DRAWING FOR SWIPE (UNCHANGED) ---
     private fun setupSwipeToDelete(recyclerView: RecyclerView) {
         val swipeCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(r: RecyclerView, v: RecyclerView.ViewHolder, t: RecyclerView.ViewHolder) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                // FIXED: We ask the adapter for the exact note at this position so search filtering doesn't break deletion
                 val noteToDelete = adapter.notesList[position]
-
-                AlertDialog.Builder(this@MainActivity)
-                    .setTitle("Delete Note")
-                    .setMessage("Are you sure you want to permanently delete this note?")
-                    .setPositiveButton("Delete") { _, _ ->
-                        deleteNoteFromBackend(noteToDelete.noteId, position, noteToDelete)
-                    }
-                    .setNegativeButton("Cancel") { _, _ -> adapter.notifyItemChanged(position) }
-                    .setCancelable(false)
-                    .show()
+                presenter.onNoteSwiped(noteToDelete, position)
             }
 
             override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
@@ -207,33 +213,5 @@ class MainActivity : AppCompatActivity() {
             }
         }
         ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerView)
-    }
-
-    private fun deleteNoteFromBackend(noteId: Long, position: Int, noteToDelete: NoteResponse) {
-        val sharedPref = getSharedPreferences("APP", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("TOKEN", "") ?: ""
-        val bearerToken = "Bearer $token"
-
-        RetrofitClient.instance.deleteNote(bearerToken, noteId).enqueue(object : Callback<Map<String, String>> {
-            override fun onResponse(call: Call<Map<String, String>>, response: Response<Map<String, String>>) {
-                if (response.isSuccessful) {
-                    // Remove the note safely from BOTH the master list and the active view list
-                    fullNotesList.remove(noteToDelete)
-                    adapter.notesList.removeAt(position)
-                    adapter.notifyItemRemoved(position)
-
-                    tvNoteCount.text = fullNotesList.size.toString()
-                    Toast.makeText(this@MainActivity, "Note Deleted", Toast.LENGTH_SHORT).show()
-                } else {
-                    adapter.notifyItemChanged(position)
-                    Toast.makeText(this@MainActivity, "Failed to delete note", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<Map<String, String>>, t: Throwable) {
-                adapter.notifyItemChanged(position)
-                Toast.makeText(this@MainActivity, "Network Error", Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 }

@@ -1,4 +1,4 @@
-package com.vnote.mobile.api
+package com.vnote.mobile.core.network
 
 data class LoginRequest(val username: String, val password: String)
 data class RegisterRequest(val fullName: String, val username: String, val password: String)
