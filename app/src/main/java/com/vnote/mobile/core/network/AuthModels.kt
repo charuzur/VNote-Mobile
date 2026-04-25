@@ -2,7 +2,6 @@ package com.vnote.mobile.core.network
 
 data class LoginRequest(val username: String, val password: String)
 data class RegisterRequest(val fullName: String, val username: String, val password: String)
-// Add the userId to this class!
 data class AuthResponse(val token: String?, val message: String?, val userId: Int?)
 data class NoteResponse(
     val noteId: Long,
@@ -10,7 +9,6 @@ data class NoteResponse(
     val content: String,
     val createdAt: String?
 )
-// Notice we added val profileImage: String? at the end
 data class UserResponse(
     val userId: Long,
     val fullName: String,
